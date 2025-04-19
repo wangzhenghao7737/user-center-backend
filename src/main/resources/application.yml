@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: user-center
+    # DataSource Config
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://8.155.47.69:3306/user_center
+    username: jackeylove
+    password: Champion2018
+  session:
+    timeout: 86400
+server:
+  port: 8890
+  servlet:
+    context-path: /api
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: false
+  global-config:
+    db-config:
+      logic-delete-field: isDelete
+      logic-delete-value: 1
+      logic-not-delete-value: 0

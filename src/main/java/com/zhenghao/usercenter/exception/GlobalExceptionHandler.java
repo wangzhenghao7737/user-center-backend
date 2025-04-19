@@ -1,6 +1,8 @@
-package com.zhenghao.usercenter.common;
+package com.zhenghao.usercenter.exception;
 
-import com.zhenghao.usercenter.exception.BusinessException;
+import com.zhenghao.usercenter.common.BaseResponse;
+import com.zhenghao.usercenter.common.ErrorCode;
+import com.zhenghao.usercenter.common.ResultUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

@@ -4,7 +4,7 @@ spring:
     # DataSource Config
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://8.155.47.69:3306/user_center
+    url: jdbc:mysql://8.155.47.69:3306/partner
     username: jackeylove
     password: Champion2018
   session:

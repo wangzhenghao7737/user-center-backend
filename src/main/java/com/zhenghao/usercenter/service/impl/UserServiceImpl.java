@@ -2,6 +2,9 @@ package com.zhenghao.usercenter.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
+import com.google.gson.reflect.TypeToken;
 import com.zhenghao.usercenter.common.ErrorCode;
 import com.zhenghao.usercenter.exception.BusinessException;
 import com.zhenghao.usercenter.model.domain.User;
@@ -12,10 +15,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
 
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.zhenghao.usercenter.constant.UserConstant.USER_LOGIN_STATUS;
 
@@ -121,6 +128,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         safeUser.setUserStatus(orginUser.getUserStatus());
         safeUser.setCreateTime(orginUser.getCreateTime());
         safeUser.setPlanetCode(orginUser.getPlanetCode());
+        safeUser.setTags(orginUser.getTags());
         return safeUser;
     }
 
@@ -129,6 +137,52 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         request.getSession().removeAttribute(USER_LOGIN_STATUS);
         return 1;
     }
+
+    @Override
+    public List<User> searchUserByTages(List<String> tagNameList) {
+        if(CollectionUtils.isEmpty(tagNameList)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+//        方式一：使用DQL
+//        QueryWrapper<User> qw = new QueryWrapper<>();
+//        for (String tag : tagNameList) {
+//            qw = qw.like("tags",tag);
+//        }
+//        List<User> userList = userMapper.selectList(qw);
+//        userList.forEach(user->{
+//            getSafetyUser(user);
+//        });
+//        return userList.stream().map(user -> getSafetyUser(user)).collect(Collectors.toList());
+//        方式二：内存中操作
+        Gson gson = new Gson();
+        QueryWrapper<User> qw = new QueryWrapper<>();
+        List<User> userList = userMapper.selectList(qw);
+//        for(User user : userList){
+//            String tags = user.getTags();
+//            Set<String> tagNameLists = gson.fromJson(tags,new TypeToken<Set<String>>(){}.getType());
+//            for(String tagName : tagNameLists){
+//                if(!tagNameList.contains(tagName)){
+//                    return false;
+//                }
+//            }
+//            return true
+//        }
+        return userList.stream().filter(user -> {
+            String tags = user.getTags();
+            if(StringUtils.isBlank(tags)){
+                return false;
+            }
+            Set<String> tagNameLists = gson.fromJson(tags,new TypeToken<Set<String>>(){}.getType());
+            for(String tagName : tagNameList){
+                if(!tagNameLists.contains(tagName)){
+                    return false;
+                }
+            }
+            return true;
+        }).map(user -> getSafetyUser(user)).collect(Collectors.toList());
+//        return userList;
+    }
+
 
 
 }

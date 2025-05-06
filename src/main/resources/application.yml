@@ -4,7 +4,7 @@ spring:
     # DataSource Config
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://8.155.47.69:3306/user_center
+    url: jdbc:mysql://8.155.47.69:3306/partner
     username: jackeylove
     password: Champion2018
   session:
@@ -16,6 +16,7 @@ server:
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
       logic-delete-field: isDelete
